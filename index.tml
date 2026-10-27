@@ -1,0 +1,342 @@
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Monitor de Abastecimento - Sanepar</title>
+      <style>
+        :root {
+          --bg-color: #f0f2f5;
+          --card-bg: #ffffff;
+          --text-main: #1c1e21;
+          --text-muted: #65676b;
+          --border-color: #e4e6eb;
+          --green: #2e7d32;
+          --green-bg: #e8f5e9;
+          --red: #c62828;
+          --red-bg: #ffebee;
+          --yellow: #e65100;
+          --yellow-bg: #fff3e0;
+          --blue: #0077b6;
+        }
+
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+          background-color: var(--bg-color);
+          color: var(--text-main);
+          padding: 24px 16px;
+          display: flex;
+          justify-content: center;
+        }
+
+        .container {
+          width: 100%;
+          max-width: 600px;
+        }
+
+        header {
+          margin-bottom: 20px;
+          text-align: center;
+        }
+
+        h1 {
+          font-size: 1.4rem;
+          color: var(--blue);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
+
+        .subtitle {
+          color: var(--text-muted);
+          font-size: 0.85rem;
+          margin-top: 4px;
+        }
+
+        .toolbar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 16px;
+          font-size: 0.85rem;
+          color: var(--text-muted);
+        }
+
+        .btn-refresh {
+          background: var(--blue);
+          color: #fff;
+          border: none;
+          border-radius: 6px;
+          padding: 8px 16px;
+          font-size: 0.85rem;
+          font-weight: 600;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          transition: opacity 0.2s;
+        }
+
+        .btn-refresh:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        .cards-list {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .card {
+          background: var(--card-bg);
+          border-radius: 12px;
+          padding: 16px;
+          border: 1px solid var(--border-color);
+          box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 12px;
+        }
+
+        .card-title {
+          font-size: 1.05rem;
+          font-weight: 600;
+        }
+
+        .card-subtitle {
+          font-size: 0.85rem;
+          color: var(--text-muted);
+          margin-top: 2px;
+        }
+
+        .badge {
+          display: inline-flex;
+          align-items: center;
+          padding: 6px 12px;
+          border-radius: 20px;
+          font-size: 0.8rem;
+          font-weight: 700;
+          white-space: nowrap;
+        }
+
+        .badge-success { background: var(--green-bg); color: var(--green); }
+        .badge-danger  { background: var(--red-bg);   color: var(--red); }
+        .badge-loading { background: var(--yellow-bg); color: var(--yellow); }
+        .badge-error   { background: #f8f9fa; color: var(--text-muted); border: 1px solid var(--border-color); }
+
+        .details-box {
+          font-size: 0.85rem;
+          border-top: 1px solid var(--border-color);
+          padding-top: 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+
+        .details-row {
+          display: flex;
+          justify-content: space-between;
+          gap: 8px;
+        }
+
+        .details-label {
+          color: var(--text-muted);
+        }
+
+        .details-value {
+          font-weight: 500;
+          text-align: right;
+        }
+      </style>
+    </head>
+    <body>
+
+      <div class="container">
+        <header>
+          <h1>🚰 Monitor de Água - Sanepar</h1>
+          <p class="subtitle">Monitoramento de interrupções e manutenções</p>
+        </header>
+
+        <div class="toolbar">
+          <span id="lastUpdated">Atualizando...</span>
+          <button class="btn-refresh" id="refreshBtn" onclick="consultarTodos()">
+            🔄 Atualizar
+          </button>
+        </div>
+
+        <div class="cards-list" id="cardsContainer"></div>
+      </div>
+
+      <script>
+        // ========================================================
+        // 1. CONFIGURE OS 3 ENDEREÇOS E AS RESPECTIVAS URLs DA SANEPAR
+        // ========================================================
+        const LOCAIS = [
+          {
+            nome: "1 Sta Ter",
+            endereco: "Endereço 1",
+            // Cole a URL completa da chamada que você testou no navegador para este endereço:
+            url: "https://server.sanepar.com.br/server/rest/services/Agua/manobras_site/MapServer/0/query?f=json&geometry=%7B%22x%22%3A-5492036.133878786%2C%22y%22%3A-2957438.6159656304%7D&resultOffset=0&resultRecordCount=2000&where=1%3D1&outFields=objectid%2Cloc_codigo%2Cman_protocolo%2Cman_previsao_inicio%2Cman_previsao_fim%2Cman_execucao_inicio%2Cman_execucao_fim%2Cman_normalizacao_previsao%2Cman_normalizacao_realizado%2Cman_situacao%2Cman_motivo&returnZ=true&spatialRel=esriSpatialRelIntersects&geometryType=esriGeometryPoint&inSR=102100&outSR=102100"
+          },
+          {
+            nome: "2 Wen Bra",
+            endereco: "Endereço 2",
+            url: "https://server.sanepar.com.br/server/rest/services/Agua/manobras_site/MapServer/0/query?f=json&geometry=%7B%22x%22%3A-5486325.444001092%2C%22y%22%3A-2934928.944451111%7D&resultOffset=0&resultRecordCount=2000&where=1%3D1&outFields=objectid%2Cloc_codigo%2Cman_protocolo%2Cman_previsao_inicio%2Cman_previsao_fim%2Cman_execucao_inicio%2Cman_execucao_fim%2Cman_normalizacao_previsao%2Cman_normalizacao_realizado%2Cman_situacao%2Cman_motivo&returnZ=true&spatialRel=esriSpatialRelIntersects&geometryType=esriGeometryPoint&inSR=102100&outSR=102100"
+          },
+          {
+            nome: "3 Ten Jul",
+            endereco: "Endereço 3",
+            url: "https://server.sanepar.com.br/server/rest/services/Agua/manobras_site/MapServer/0/query?f=json&geometry=%7B%22x%22%3A-5483361.542421581%2C%22y%22%3A-2942977.558644938%7D&resultOffset=0&resultRecordCount=2000&where=1%3D1&outFields=objectid%2Cloc_codigo%2Cman_protocolo%2Cman_previsao_inicio%2Cman_previsao_fim%2Cman_execucao_inicio%2Cman_execucao_fim%2Cman_normalizacao_previsao%2Cman_normalizacao_realizado%2Cman_situacao%2Cman_motivo&returnZ=true&spatialRel=esriSpatialRelIntersects&geometryType=esriGeometryPoint&inSR=102100&outSR=102100"
+          }
+        ];
+
+        // ========================================================
+        // 2. CONSULTA E PROCESSAMENTO DA RESPOSTA DA SANEPAR (ARCGIS)
+        // ========================================================
+        async function consultarLocal(local) {
+          try {
+            const response = await fetch(local.url, {
+              method: "GET",
+              headers: { "Accept": "application/json" }
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            // Se a lista de 'features' estiver vazia: NÃO há corte registrado -> COM ÁGUA
+            if (!data.features || data.features.length === 0) {
+              return {
+                sucesso: true,
+                temAgua: true,
+                motivo: "Nenhuma manutenção ou interrupção informada no momento.",
+                previsao: null,
+                protocolo: null
+              };
+            }
+
+            // Se houver registros em 'features': Há interrupção ativa
+            const attrs = data.features[0].attributes || {};
+
+            return {
+              sucesso: true,
+              temAgua: false,
+              motivo: attrs.man_motivo || "Manutenção programada / emergencial",
+              previsao: attrs.man_normalizacao_previsao || attrs.man_previsao_fim || "Não informada",
+              protocolo: attrs.man_protocolo || "-"
+            };
+
+          } catch (err) {
+            console.error(`Erro ao consultar ${local.nome}:`, err);
+            return {
+              sucesso: false,
+              mensagem: "Falha na comunicação com a Sanepar"
+            };
+          }
+        }
+
+        // ========================================================
+        // 3. RENDERIZAÇÃO NA TELA
+        // ========================================================
+        function renderizar(statusList) {
+          const container = document.getElementById("cardsContainer");
+          container.innerHTML = "";
+
+          LOCAIS.forEach((local, i) => {
+            const status = statusList ? statusList[i] : null;
+
+            let badgeHtml = "";
+            let detailsHtml = "";
+
+            if (!status) {
+              badgeHtml = `<span class="badge badge-loading">⏳ Consultando...</span>`;
+              detailsHtml = `<div class="details-box"><span class="details-label">Verificando rede Sanepar...</span></div>`;
+            } else if (!status.sucesso) {
+              badgeHtml = `<span class="badge badge-error">⚠️ Erro</span>`;
+              detailsHtml = `<div class="details-box"><span class="details-label">${status.mensagem}</span></div>`;
+            } else if (status.temAgua) {
+              badgeHtml = `<span class="badge badge-success">🟢 Normal</span>`;
+              detailsHtml = `
+                <div class="details-box">
+                  <span class="details-label">${status.motivo}</span>
+                </div>
+              `;
+            } else {
+              badgeHtml = `<span class="badge badge-danger">🔴 Interrupção</span>`;
+              detailsHtml = `
+                <div class="details-box">
+                  <div class="details-row">
+                    <span class="details-label">Motivo:</span>
+                    <span class="details-value">${status.motivo}</span>
+                  </div>
+                  <div class="details-row">
+                    <span class="details-label">Previsão Normalização:</span>
+                    <span class="details-value" style="color: var(--red);">${status.previsao}</span>
+                  </div>
+                  ${status.protocolo ? `
+                  <div class="details-row">
+                    <span class="details-label">Protocolo:</span>
+                    <span class="details-value">${status.protocolo}</span>
+                  </div>` : ''}
+                </div>
+              `;
+            }
+
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `
+              <div class="card-header">
+                <div>
+                  <div class="card-title">${local.nome}</div>
+                  <div class="card-subtitle">${local.endereco}</div>
+                </div>
+                ${badgeHtml}
+              </div>
+              ${detailsHtml}
+            `;
+            container.appendChild(card);
+          });
+        }
+
+        // ========================================================
+        // 4. ATUALIZAÇÃO GERAL
+        // ========================================================
+        async function consultarTodos() {
+          const btn = document.getElementById("refreshBtn");
+          const lastUpdated = document.getElementById("lastUpdated");
+
+          btn.disabled = true;
+          renderizar(null);
+
+          const resultados = await Promise.all(LOCAIS.map(consultarLocal));
+          renderizar(resultados);
+
+          const agora = new Date();
+          lastUpdated.textContent = `Última consulta: ${agora.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
+          btn.disabled = false;
+        }
+
+        window.addEventListener("DOMContentLoaded", consultarTodos);
+
+        // Atualiza automaticamente a cada 10 minutos
+        setInterval(consultarTodos, 10 * 60 * 1000);
+      </script>
+    </body>
+    </html>
