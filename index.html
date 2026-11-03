@@ -168,7 +168,7 @@
 
       <div class="container">
         <header>
-          <h1>🚰 Monitor de Água - Sanepar</h1>
+          <h1>🚰 Tem água?</h1>
           <p class="subtitle">Monitoramento de interrupções e manutenções</p>
         </header>
 
@@ -188,21 +188,40 @@
         // ========================================================
         const LOCAIS = [
           {
-            nome: "1 Sta Ter",
-            endereco: "Endereço 1",
-            // Cole a URL completa da chamada que você testou no navegador para este endereço:
+            nome: "Santa Terezinha",
+            endereco: "Bairro Santa Terezinha, Fazenda Rio Grande - PR",
             url: "https://server.sanepar.com.br/server/rest/services/Agua/manobras_site/MapServer/0/query?f=json&geometry=%7B%22x%22%3A-5492036.133878786%2C%22y%22%3A-2957438.6159656304%7D&resultOffset=0&resultRecordCount=2000&where=1%3D1&outFields=objectid%2Cloc_codigo%2Cman_protocolo%2Cman_previsao_inicio%2Cman_previsao_fim%2Cman_execucao_inicio%2Cman_execucao_fim%2Cman_normalizacao_previsao%2Cman_normalizacao_realizado%2Cman_situacao%2Cman_motivo&returnZ=true&spatialRel=esriSpatialRelIntersects&geometryType=esriGeometryPoint&inSR=102100&outSR=102100"
           },
           {
-            nome: "2 Wen Bra",
-            endereco: "Endereço 2",
+            nome: "Avenida Presidente Wenceslau Braz",
+            endereco: "Região dos bairros Novo Mundo e Lindoia, Curitiba - PR",
             url: "https://server.sanepar.com.br/server/rest/services/Agua/manobras_site/MapServer/0/query?f=json&geometry=%7B%22x%22%3A-5486325.444001092%2C%22y%22%3A-2934928.944451111%7D&resultOffset=0&resultRecordCount=2000&where=1%3D1&outFields=objectid%2Cloc_codigo%2Cman_protocolo%2Cman_previsao_inicio%2Cman_previsao_fim%2Cman_execucao_inicio%2Cman_execucao_fim%2Cman_normalizacao_previsao%2Cman_normalizacao_realizado%2Cman_situacao%2Cman_motivo&returnZ=true&spatialRel=esriSpatialRelIntersects&geometryType=esriGeometryPoint&inSR=102100&outSR=102100"
           },
           {
-            nome: "3 Ten Jul",
-            endereco: "Endereço 3",
+            nome: "Rua São José dos Pinhais",
+            endereco: "Região do Bairro Novo A, Sítio Cercado, Curitiba - PR",
             url: "https://server.sanepar.com.br/server/rest/services/Agua/manobras_site/MapServer/0/query?f=json&geometry=%7B%22x%22%3A-5483361.542421581%2C%22y%22%3A-2942977.558644938%7D&resultOffset=0&resultRecordCount=2000&where=1%3D1&outFields=objectid%2Cloc_codigo%2Cman_protocolo%2Cman_previsao_inicio%2Cman_previsao_fim%2Cman_execucao_inicio%2Cman_execucao_fim%2Cman_normalizacao_previsao%2Cman_normalizacao_realizado%2Cman_situacao%2Cman_motivo&returnZ=true&spatialRel=esriSpatialRelIntersects&geometryType=esriGeometryPoint&inSR=102100&outSR=102100"
-          }
+          },
+          {
+            nome: "Santa Quitéria",
+            endereco: "Região do Bairro Santa Quitéria, Curitiba - PR",
+            url: "https://server.sanepar.com.br/server/rest/services/Agua/manobras_site/MapServer/0/query?f=json&geometry=%7B%22x%22%3A-5489899.222354586%2C%22y%22%3A-2932646.298895254%7D&resultOffset=0&resultRecordCount=2000&where=1%3D1&outFields=objectid%2Cloc_codigo%2Cman_protocolo%2Cman_previsao_inicio%2Cman_previsao_fim%2Cman_execucao_inicio%2Cman_execucao_fim%2Cman_normalizacao_previsao%2Cman_normalizacao_realizado%2Cman_situacao%2Cman_motivo&returnZ=true&spatialRel=esriSpatialRelIntersects&geometryType=esriGeometryPoint&inSR=102100&outSR=102100"
+          }, 
+                    {
+            nome: "Campo Comprido",
+            endereco: "Região do Jardim Santos Andrade, Curitiba - PR",
+            url: "https://server.sanepar.com.br/server/rest/services/Agua/manobras_site/MapServer/0/query?f=json&geometry=%7B%22x%22%3A-5491791.23099904%2C%22y%22%3A-2932401.2138591134%7D&resultOffset=0&resultRecordCount=2000&where=1%3D1&outFields=objectid%2Cloc_codigo%2Cman_protocolo%2Cman_previsao_inicio%2Cman_previsao_fim%2Cman_execucao_inicio%2Cman_execucao_fim%2Cman_normalizacao_previsao%2Cman_normalizacao_realizado%2Cman_situacao%2Cman_motivo&returnZ=true&spatialRel=esriSpatialRelIntersects&geometryType=esriGeometryPoint&inSR=102100&outSR=102100"
+          }, 
+          {
+            nome: "Santa Terezinha (Teste) - Coordenada 2",
+            endereco: "Bairro Santa Terezinha, Fazenda Rio Grande - PR",
+            url: "https://server.sanepar.com.br/server/rest/services/Agua/manobras_site/MapServer/0/query?f=json&geometry=%7B%22x%22%3A-5492013.869980628%2C%22y%22%3A-2957413.915498994%7D&resultOffset=0&resultRecordCount=2000&where=1%3D1&outFields=objectid%2Cloc_codigo%2Cman_protocolo%2Cman_previsao_inicio%2Cman_previsao_fim%2Cman_execucao_inicio%2Cman_execucao_fim%2Cman_normalizacao_previsao%2Cman_normalizacao_realizado%2Cman_situacao%2Cman_motivo&returnZ=true&spatialRel=esriSpatialRelIntersects&geometryType=esriGeometryPoint&inSR=102100&outSR=102100"
+          },
+          {
+            nome: "Teste Local sem água",
+            endereco: "Alto da XV",
+            url: "https://server.sanepar.com.br/server/rest/services/Agua/manobras_site/MapServer/0/query?f=json&geometry=%7B%22x%22%3A-5478788.859556315%2C%22y%22%3A-2926171.112359046%7D&resultOffset=0&resultRecordCount=2000&where=1%3D1&outFields=objectid%2Cloc_codigo%2Cman_protocolo%2Cman_previsao_inicio%2Cman_previsao_fim%2Cman_execucao_inicio%2Cman_execucao_fim%2Cman_normalizacao_previsao%2Cman_normalizacao_realizado%2Cman_situacao%2Cman_motivo&returnZ=true&spatialRel=esriSpatialRelIntersects&geometryType=esriGeometryPoint&inSR=102100&outSR=102100"
+          }    
         ];
 
         // ========================================================
@@ -272,14 +291,14 @@
               badgeHtml = `<span class="badge badge-error">⚠️ Erro</span>`;
               detailsHtml = `<div class="details-box"><span class="details-label">${status.mensagem}</span></div>`;
             } else if (status.temAgua) {
-              badgeHtml = `<span class="badge badge-success">🟢 Normal</span>`;
+              badgeHtml = `<span class="badge badge-success">🟢 Tem!</span>`;
               detailsHtml = `
                 <div class="details-box">
                   <span class="details-label">${status.motivo}</span>
                 </div>
               `;
             } else {
-              badgeHtml = `<span class="badge badge-danger">🔴 Interrupção</span>`;
+              badgeHtml = `<span class="badge badge-danger">🔴 Não tem!</span>`;
               detailsHtml = `
                 <div class="details-box">
                   <div class="details-row">
